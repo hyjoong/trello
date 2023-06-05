@@ -1,7 +1,11 @@
+import Header from "./Header";
+
 export default function Home() {
   return (
     <main>
-      <h1>trello</h1>
+      <h1>
+        <Header />
+      </h1>
     </main>
   );
 }
