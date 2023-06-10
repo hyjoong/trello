@@ -2,7 +2,8 @@
 import { useBoardStore } from "@/store/boardStore";
 import React, { useEffect } from "react";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import Column from "./Column";
+import { Column } from "@/types/boardTypes";
+import BoardColumn from "./Column";
 
 const Board = () => {
   const { board, getBoard, setBoardState } = useBoardStore((state) => state);
@@ -28,6 +29,56 @@ const Board = () => {
         columns: newColumns,
       });
     }
+
+    const columns = Array.from(board.columns);
+    const startColumnIndex = columns[Number(source.droppableId)];
+    const finishColumnIndex = columns[Number(destination.droppableId)];
+
+    const startColumn: Column = {
+      id: startColumnIndex[0],
+      todos: startColumnIndex[1].todos,
+    };
+
+    const finishColumn: Column = {
+      id: finishColumnIndex[0],
+      todos: finishColumnIndex[1].todos,
+    };
+
+    if (!startColumn || !finishColumn) return;
+
+    if (source.index === destination.index && startColumn === finishColumn)
+      return;
+
+    const newTodoItem = startColumn.todos;
+    const [movedItem] = newTodoItem.splice(source.index, 1);
+
+    if (startColumn.id === finishColumn.id) {
+      newTodoItem.splice(destination.index, 0, movedItem);
+      const newColumn = {
+        id: startColumn.id,
+        todos: newTodoItem,
+      };
+      const newColumns = new Map(board.columns);
+      newColumns.set(startColumn.id, newColumn);
+      setBoardState({ ...board, columns: newColumns });
+    } else {
+      const finishTodos = Array.from(finishColumn.todos);
+      finishTodos.splice(destination.index, 0, movedItem);
+
+      const newColumns = new Map(board.columns);
+      const newColumn = {
+        id: startColumn.id,
+        todos: newTodoItem,
+      };
+
+      newColumns.set(startColumn.id, newColumn);
+      newColumns.set(finishColumn.id, {
+        id: finishColumn.id,
+        todos: finishTodos,
+      });
+
+      setBoardState({ ...board, columns: newColumns });
+    }
   };
 
   return (
@@ -40,7 +91,12 @@ const Board = () => {
             ref={proviced.innerRef}
           >
             {Array.from(board.columns.entries()).map(([id, column], index) => (
-              <Column key={id} id={id} todos={column.todos} index={index} />
+              <BoardColumn
+                key={id}
+                id={id}
+                todos={column.todos}
+                index={index}
+              />
             ))}
           </div>
         )}
