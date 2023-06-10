@@ -6,7 +6,9 @@ import { Column } from "@/types/boardTypes";
 import BoardColumn from "./Column";
 
 const Board = () => {
-  const { board, getBoard, setBoardState } = useBoardStore((state) => state);
+  const { board, getBoard, setBoardState, updateTodoDatabase } = useBoardStore(
+    (state) => state
+  );
   useEffect(() => {
     getBoard();
   }, [getBoard]);
@@ -76,6 +78,8 @@ const Board = () => {
         id: finishColumn.id,
         todos: finishTodos,
       });
+
+      updateTodoDatabase(movedItem, finishColumn.id);
 
       setBoardState({ ...board, columns: newColumns });
     }
