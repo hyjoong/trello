@@ -15,12 +15,12 @@ export const getTodosGroupedByColumn = async () => {
       });
     }
 
-    acc.get(todo.status)?.todos.push({
+    acc.get(todo.status)!.todos.push({
       $id: todo.$id,
       $createdAt: todo.$createdAt,
       title: todo.title,
       status: todo.status,
-      ...(todo.image && { image: todo.image }),
+      ...(todo.image && { image: JSON.parse(todo.image) }),
     });
 
     return acc;
@@ -36,14 +36,14 @@ export const getTodosGroupedByColumn = async () => {
     }
   }
 
-  const sortedColumn = new Map(
+  const sortedColumns = new Map(
     Array.from(columns.entries()).sort(
       (a, b) => columnTypes.indexOf(a[0]) - columnTypes.indexOf(b[0])
     )
   );
 
   const board: Board = {
-    columns: sortedColumn,
+    columns: sortedColumns,
   };
 
   return board;
