@@ -2,12 +2,12 @@ import { Models } from "appwrite";
 
 export type TypedColumn = "todo" | "inprogress" | "done";
 
-export interface Todo extends Models.Document {
+export interface Todo {
   $id: string;
   $createdAt: string;
   title: string;
   status: TypedColumn;
-  image?: Image;
+  image?: ImageType;
 }
 
 export interface Column {
@@ -15,7 +15,7 @@ export interface Column {
   todos: Todo[];
 }
 
-interface Image {
+export interface ImageType {
   bucketId: string;
   fileId: string;
 }
