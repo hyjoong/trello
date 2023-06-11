@@ -14,6 +14,19 @@ const Header = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestion, setSuggestion] = useState("");
 
+  useEffect(() => {
+    if (board.columns.size === 0) return;
+    setIsLoading(true);
+
+    const fetchSuggestion = async () => {
+      const suggestion = await getSuggestion(board);
+      setSuggestion(suggestion);
+      setIsLoading(false);
+    };
+
+    fetchSuggestion();
+  }, [board]);
+
   return (
     <header>
       <div className="flex flex-col md:flex-row items-center p-5 bg-gray-500/10 rounded-b-2xl">
